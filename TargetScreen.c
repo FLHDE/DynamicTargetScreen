@@ -5,7 +5,7 @@
 
 #define STDCALL __stdcall
 
-#define TOP_DOWN_TARGET_VIEW    (*(PBOOL) 0x679C18)
+#define TOP_DOWN_TARGET_VIEW                    (*(PBOOL) 0x679C18)
 
 #define ADDR_GET_TARGET_STATUS_MINIMIZED        ((PBYTE) 0x4E2C25)
 #define ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED   ((PBYTE) 0x4E2C2D)
@@ -44,7 +44,7 @@ BOOLEAN STDCALL GetTargetStatusMinimized_Hook( TargetStatusHandler* pHandler )
 {
     // When the Target Status window is minimized, the wireframe is not visible, so don't toggle the top-down Target View.
     // If the window is open and the Target DLL is loaded, the target wireframe is always visible, so allow it to toggle.
-    // Finally, if the window is open and the DLL is not loaded, do not toggle the view if the target wireframe is visible.
+    // Finally, if the window is open and the DLL is not loaded, only toggle the view if the target wireframe is visible.
     if (pHandler->windowOpen &&
         (g_targetDllLoaded || pHandler->selectedView == STATUSVIEW_TARGET))
     {
@@ -57,14 +57,14 @@ BOOLEAN STDCALL GetTargetStatusMinimized_Hook( TargetStatusHandler* pHandler )
 void Patch()
 {
     ProtectX( ADDR_GET_TARGET_STATUS_MINIMIZED, 7 );
-    *ADDR_GET_TARGET_STATUS_MINIMIZED = 0x57; // push edi
+    *ADDR_GET_TARGET_STATUS_MINIMIZED = 0x57; // push edi (TargetStatusHandler*)
     CALL( ADDR_GET_TARGET_STATUS_MINIMIZED + 1, GetTargetStatusMinimized_Hook );
 
     if (g_targetDllLoaded = GetModuleHandle( "HudTarget.dll" ) != NULL)
     {
         // The Adv Wide HUD plugin hides the Switch To Target button, so make it visible again.
         ProtectX( ADDR_SWITCH_TO_TARGET_BTN_HIDDEN, 1 );
-        *ADDR_SWITCH_TO_TARGET_BTN_HIDDEN = 0x08; // or
+        *ADDR_SWITCH_TO_TARGET_BTN_HIDDEN = 0x08; // xor -> or
 
         // When the Switch To Target button is visible, make sure FL doesn't do anything when the user presses it.
         memcpy( ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED, "\x66\x0F\x1F\x44\x00\x00", 6 ); // nop
