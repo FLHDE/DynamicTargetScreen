@@ -7,7 +7,7 @@
 
 #define TOP_DOWN_TARGET_VIEW                    (*(PBOOL) 0x679C18)
 
-#define ADDR_GET_TARGET_STATUS_MINIMIZED        ((PBYTE) 0x4E2C25)
+#define ADDR_GET_TARGET_STATUS_OPEN             ((PBYTE) 0x4E2C25)
 #define ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED   ((PBYTE) 0x4E2C2D)
 #define ADDR_SWITCH_TO_TARGET_BTN_HIDDEN        ((PBYTE) 0x4E36DA)
 
@@ -40,7 +40,7 @@ typedef struct TargetStatusHandler
     TARGETSTATUSVIEW    selectedView;   // 0x2C4
 } TargetStatusHandler;
 
-BOOLEAN STDCALL GetTargetStatusMinimized_Hook( const TargetStatusHandler* pHandler )
+BOOLEAN STDCALL GetTargetStatusOpen_Hook( const TargetStatusHandler* pHandler )
 {
     // When the Target Status window is minimized, the wireframe is not visible, so don't toggle the top-down Target View.
     // If the window is open and the Target DLL is loaded, the target wireframe is always visible, so allow it to toggle.
@@ -56,9 +56,9 @@ BOOLEAN STDCALL GetTargetStatusMinimized_Hook( const TargetStatusHandler* pHandl
 
 void Patch()
 {
-    ProtectX( ADDR_GET_TARGET_STATUS_MINIMIZED, 6 );
-    *ADDR_GET_TARGET_STATUS_MINIMIZED = 0x57; // push edi (TargetStatusHandler*)
-    CALL( ADDR_GET_TARGET_STATUS_MINIMIZED + 1, GetTargetStatusMinimized_Hook );
+    ProtectX( ADDR_GET_TARGET_STATUS_OPEN, 6 );
+    *ADDR_GET_TARGET_STATUS_OPEN = 0x57; // push edi (TargetStatusHandler*)
+    CALL( ADDR_GET_TARGET_STATUS_OPEN + 1, GetTargetStatusOpen_Hook );
 
     if (g_targetDllLoaded = GetModuleHandle( "HudTarget.dll" ) != NULL)
     {
