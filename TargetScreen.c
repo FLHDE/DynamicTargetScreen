@@ -67,8 +67,8 @@ void Patch()
         *ADDR_SWITCH_TO_TARGET_BTN_HIDDEN = 0x08; // xor -> or
 
         // When the Switch To Target button is visible, make sure FL doesn't do anything when the user presses it.
-        memcpy( ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED, "\x66\x0F\x1F\x44\x00\x00", 6 ); // nop
         ProtectX( ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED, 6 );
+        memcpy( ADDR_UPDATE_SWITCH_TO_TARGET_SELECTED, "\x66\x0F\x1F\x44\x00\x00", 6 ); // nop
     }
 }
 
