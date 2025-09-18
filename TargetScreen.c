@@ -40,7 +40,7 @@ typedef struct TargetStatusHandler
     TARGETSTATUSVIEW    selectedView;   // 0x2C4
 } TargetStatusHandler;
 
-BOOLEAN STDCALL GetTargetStatusMinimized_Hook( TargetStatusHandler* pHandler )
+BOOLEAN STDCALL GetTargetStatusMinimized_Hook( const TargetStatusHandler* pHandler )
 {
     // When the Target Status window is minimized, the wireframe is not visible, so don't toggle the top-down Target View.
     // If the window is open and the Target DLL is loaded, the target wireframe is always visible, so allow it to toggle.
