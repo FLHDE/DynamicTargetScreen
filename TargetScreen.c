@@ -56,7 +56,7 @@ BOOLEAN STDCALL GetTargetStatusMinimized_Hook( const TargetStatusHandler* pHandl
 
 void Patch()
 {
-    ProtectX( ADDR_GET_TARGET_STATUS_MINIMIZED, 7 );
+    ProtectX( ADDR_GET_TARGET_STATUS_MINIMIZED, 6 );
     *ADDR_GET_TARGET_STATUS_MINIMIZED = 0x57; // push edi (TargetStatusHandler*)
     CALL( ADDR_GET_TARGET_STATUS_MINIMIZED + 1, GetTargetStatusMinimized_Hook );
 
